@@ -13,7 +13,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 
-camera.position.setZ(50);
+camera.position.setZ(10);
 
 renderer.render( scene, camera );
 
@@ -39,9 +39,8 @@ function animate(position: Array<number>) { // idk if this typehint format is co
     // torus.rotation.x += 0.01;
     // torus.rotation.y += 0.005;
     // torus.rotation.z += 0.01;
-    // torus.rotation.x = delta;
-    // torus.position.y = delta*100;
     // torus.position.x = position[0]*10;
+    // torus.position.z += 0.1;
     camera.position.x = -position[0]*5;
     camera.position.y = position[1]*10;
     // console.log(torus.position.x);
