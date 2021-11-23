@@ -1,4 +1,5 @@
 import './facemesh.css'
+import '@mediapipe/control_utils/control_utils.css'
 import * as controls from '@mediapipe/control_utils'; 
 import * as drawingUtils from '@mediapipe/drawing_utils'; 
 import * as mpFaceMesh from '@mediapipe/face_mesh'; 
