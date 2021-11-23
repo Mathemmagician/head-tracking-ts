@@ -1,6 +1,6 @@
 import './facemesh.css'
 
-import { bgAnimate } from './background.ts';
+import { bgAnimate } from './background';
 
 import DeviceDetector from "https://cdn.skypack.dev/device-detector-js@2.2.10";
 
@@ -43,10 +43,11 @@ const controls = window;
 const drawingUtils = window;
 const mpFaceMesh = window;
 
-const config = {locateFile: (file) => {
-  return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@` +
-         `${mpFaceMesh.VERSION}/${file}`;
-}};
+const config = {
+  locateFile: (file) => {
+    return `node_modules/@mediapipe/face_mesh/${file}`;
+  }
+};
 
 // Our input frames will come from here.
 const videoElement =
@@ -89,23 +90,36 @@ function onResults(results: mpFaceMesh.Results): void {
   // Draw the overlays.
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-  canvasCtx.drawImage(
-      results.image, 0, 0, canvasElement.width, canvasElement.height);
+  canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
   if (results.multiFaceLandmarks) {
     let faceCentroid = [0,0,0];
+    let minx = 999;
+    let maxx = -999;
+    
+
     for (const landmarks of results.multiFaceLandmarks) {
       for (const landmark of landmarks) {
         faceCentroid[0] += landmark.x;
         faceCentroid[1] += landmark.y;
         faceCentroid[2] += landmark.z;
+        minx = Math.min(minx, landmark.x);
+        maxx = Math.max(maxx, landmark.x);
       }
       for (let i=0; i<3; i++){
         faceCentroid[i] /= landmarks.length;
       }
 
+      // drawingUtils.drawLandmarks(
+      //   canvasCtx, results.detections[0].landmarks, 
+      //   {color: 'red',radius: 5,});
+
+      // console.log(mpFaceMesh.FACEMESH_TESSELATION);
+
       drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_TESSELATION,
+          canvasCtx, landmarks, mpFaceMesh.FACEMESH_TESSELATION.slice(1, 1000),
           {color: '#C0C0C070', lineWidth: 1});
+
       drawingUtils.drawConnectors(
           canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYE,
           {color: '#FF3030'});
@@ -133,9 +147,7 @@ function onResults(results: mpFaceMesh.Results): void {
       }
     }
     // RA
-    // console.log(faceCentroid);
-    // console.log( 'faceCentroid ' + faceCentroid);
-    bgAnimate(faceCentroid);
+    bgAnimate(faceCentroid, Math.abs(maxx-minx));
   }
   canvasCtx.restore();
 }

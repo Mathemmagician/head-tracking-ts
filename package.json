@@ -12,6 +12,10 @@
     "vite": "^2.6.4"
   },
   "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1632432234",
+    "@mediapipe/control_utils": "^0.6.1629159505",
+    "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
     "three": "^0.134.0"
   }
 }
