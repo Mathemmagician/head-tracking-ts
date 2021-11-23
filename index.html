@@ -7,7 +7,7 @@
     <title>Head Tracking App</title>
 
     <!-- Face Mesh https://codepen.io/mediapipe/pen/KKgVaPJ -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.css" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="node_modules/@mediapipe/control_utils/control_utils.css">  
     <script src="node_modules/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="node_modules/@mediapipe/control_utils/control_utils.js"></script>
     <script src="node_modules/@mediapipe/drawing_utils/drawing_utils.js"></script>
@@ -32,7 +32,9 @@
 
 
     <script type="module" src="/src/background.ts"></script>
-    <script type="module" src="/src/frankenstein.ts"></script>
+    <script type="module" src="/src/device.ts"></script>
+    <script type="module" src="/src/facemesh.ts"></script>
+    <!-- <script type="module" src="/src/frankenstein.ts"></script> -->
 
   </body>
 </html>
