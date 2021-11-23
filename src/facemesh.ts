@@ -1,10 +1,8 @@
 import './facemesh.css'
+import * as controls from '@mediapipe/control_utils'; 
+import * as drawingUtils from '@mediapipe/drawing_utils'; 
+import * as mpFaceMesh from '@mediapipe/face_mesh'; 
 import { bgAnimate } from './background';
-
-
-const controls = window;
-const drawingUtils = window;
-const mpFaceMesh = window;
 
 
 const config = {
@@ -22,9 +20,6 @@ const controlsElement =
     document.getElementsByClassName('control-panel')[0] as HTMLDivElement;
 const canvasCtx = canvasElement.getContext('2d')!;
 
-/**
- * Solution options.
- */
 const solutionOptions = {
   selfieMode: true,
   enableFaceGeometry: false,
