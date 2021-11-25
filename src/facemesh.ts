@@ -1,16 +1,19 @@
 import './facemesh.css'
 import '@mediapipe/control_utils/control_utils.css'
-import * as controls from '@mediapipe/control_utils'; 
-import * as drawingUtils from '@mediapipe/drawing_utils'; 
-import * as mpFaceMesh from '@mediapipe/face_mesh'; 
+import * as controls from '@mediapipe/control_utils';
+import * as drawingUtils from '@mediapipe/drawing_utils';
+import * as mpFaceMesh from '@mediapipe/face_mesh';
+import * as cameraUtils from '@mediapipe/camera_utils';
 import { bgAnimate } from './background';
-
 
 const config = {
   locateFile: (file: any) => {
     return `node_modules/@mediapipe/face_mesh/${file}`;
   }
 };
+
+const webcamePixelWidth = 1280;
+const webcamePixelHeight = 720;
 
 // Our input frames will come from here.
 const videoElement =
@@ -40,6 +43,8 @@ spinner.ontransitionend = () => {
   spinner.style.display = 'none';
 };
 
+let counter = 1;
+
 function onResults(results: mpFaceMesh.Results): void {
   // Hide the spinner.
   document.body.classList.add('loaded');
@@ -52,62 +57,74 @@ function onResults(results: mpFaceMesh.Results): void {
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
   canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-  if (results.multiFaceLandmarks) {
+  if (results.multiFaceLandmarks.length > 0) {
     let faceCentroid = [0,0,0];
-    let minx = 999;
-    let maxx = -999;
-    
 
-    for (const landmarks of results.multiFaceLandmarks) {
-      for (const landmark of landmarks) {
-        faceCentroid[0] += landmark.x;
-        faceCentroid[1] += landmark.y;
-        faceCentroid[2] += landmark.z;
-        minx = Math.min(minx, landmark.x);
-        maxx = Math.max(maxx, landmark.x);
-      }
-      for (let i=0; i<3; i++){
-        faceCentroid[i] /= landmarks.length;
-      }
+    const landmarks = results.multiFaceLandmarks[0];
+    for (const landmark of landmarks) {
+      faceCentroid[0] += landmark.x;
+      faceCentroid[1] += landmark.y;
+      faceCentroid[2] += landmark.z;
+    }
+    for (let i=0; i<3; i++){
+      faceCentroid[i] /= landmarks.length;
+    }
 
-      // drawingUtils.drawLandmarks(
-      //   canvasCtx, results.detections[0].landmarks, 
-      //   {color: 'red',radius: 5,});
+    if (counter === 0) {
+      console.log(mpFaceMesh.FACEMESH_FACE_OVAL);
+    }
 
-      // console.log(mpFaceMesh.FACEMESH_TESSELATION);
+    // drawingUtils.drawLandmarks(
+    //   canvasCtx, landmarks.slice(125, 130+1), 
+    //   {color: 'red', radius: 5,});
+    counter += 0.1;
+    // console.log('counter + ' + counter);
 
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_TESSELATION.slice(1, 1000),
-          {color: '#C0C0C070', lineWidth: 1});
+    // console.log(mpFaceMesh.FACEMESH_TESSELATION);
 
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYE,
-          {color: '#FF3030'});
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYEBROW,
-          {color: '#FF3030'});
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYE,
-          {color: '#30FF30'});
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYEBROW,
-          {color: '#30FF30'});
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_FACE_OVAL,
-          {color: '#E0E0E0'});
-      drawingUtils.drawConnectors(
-          canvasCtx, landmarks, mpFaceMesh.FACEMESH_LIPS, {color: '#E0E0E0'});
-           if (solutionOptions.refineLandmarks) {
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_TESSELATION,
+        {color: '#C0C0C070', lineWidth: 1});
+
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYE,
+        {color: '#FF3030'});
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYEBROW,
+        {color: '#FF3030'});
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYE,
+        {color: '#30FF30'});
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYEBROW,
+        {color: '#30FF30'});
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_FACE_OVAL,
+        {color: '#E0E0E0'});
+    drawingUtils.drawConnectors(
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LIPS, 
+        {color: '#E0E0E0'});
+    if (solutionOptions.refineLandmarks) {
       drawingUtils.drawConnectors(
           canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_IRIS,
           {color: '#FF3030'});
       drawingUtils.drawConnectors(
           canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_IRIS,
           {color: '#30FF30'});
-      }
     }
+    // }
     // RA
-    bgAnimate(faceCentroid, Math.abs(maxx-minx));
+    // console.log(Math.round(faceCentroid[0] * 100)/100, Math.round(faceCentroid[1] * 100)/100);
+
+    // const faceWidth = Math.hypot()
+
+    const leftTemple = landmarks[226];  // Adjust these
+    const rightTemple = landmarks[446];
+    const headPixelWidthX = Math.abs(leftTemple.x - rightTemple.x) * webcamePixelWidth;
+    const headPixelWidthY = Math.abs(leftTemple.y - rightTemple.y) * webcamePixelHeight;
+    const headPixelWidth = Math.hypot(headPixelWidthX, headPixelWidthY);
+
+    bgAnimate(faceCentroid, headPixelWidth / webcamePixelWidth);
   }
   canvasCtx.restore();
 }
@@ -115,6 +132,15 @@ function onResults(results: mpFaceMesh.Results): void {
 const faceMesh = new mpFaceMesh.FaceMesh(config);
 faceMesh.setOptions(solutionOptions);
 faceMesh.onResults(onResults);
+
+const camera = new cameraUtils.Camera(videoElement, {
+  onFrame: async () => {
+    await faceMesh.send({ image: videoElement }).catch(e => alert(e));
+  },
+  width: webcamePixelWidth,
+  height: webcamePixelHeight
+});
+camera.start();
 
 // Present a control panel through which the user can manipulate the solution
 // options.
@@ -124,9 +150,10 @@ new controls
       new controls.StaticText({title: 'MediaPipe Face Mesh'}),
       fpsControl,
       new controls.Toggle({title: 'Selfie Mode', field: 'selfieMode'}),
-      new controls.SourcePicker({
+      /*new controls.SourcePicker({
         onFrame:
             async (input: controls.InputImage, size: controls.Rectangle) => {
+              console.log("SourcePicker")
               const aspect = size.height / size.width;
               let width: number, height: number;
               if (window.innerWidth > window.innerHeight) {
@@ -140,7 +167,7 @@ new controls
               canvasElement.height = height;
               await faceMesh.send({image: input});
             },
-      }),
+      }),*/
       new controls.Slider({
         title: 'Max Number of Faces',
         field: 'maxNumFaces',
