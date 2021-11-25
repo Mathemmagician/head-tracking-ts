@@ -1,6 +1,9 @@
+// fps example code:
+// https://github.com/mrdoob/three.js/blob/master/examples/games_fps.html
 import './background.css'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
 
 import { scene } from './scene';
 import { Vector3 } from 'three';
@@ -10,13 +13,16 @@ const WEBCAM_FOV_X = 75; // maybe?
 const DEG2RAD = Math.PI / 180;
 const FACE_WIDTH_CM = 15;  // double check
 
+const clock = new THREE.Clock();
+
 const camera = new THREE.PerspectiveCamera( WEBCAM_FOV_Y, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#bg'),});
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 camera.position.set(0, 50, 50);
 
-const controls = new OrbitControls( camera, renderer.domElement );
+// const controls = new OrbitControls( camera, renderer.domElement );
+const controls = new FlyControls( camera, renderer.domElement );
 
 
 window.addEventListener( 'resize', onWindowResize );
@@ -28,8 +34,8 @@ function onWindowResize() {
 }
 
 function faceCentroid2xyz(faceCentroid: Vector3, faceWidth: number) {
-    // This function converts faceCentroid (x, y, z) with coordinates ranging
-    // from about 0 to 1 to (X, Y, Z) measured in cm
+    // This function converts faceCentroid (x, y, z) with coordinates
+    // ranging from about 0 to 1 to (X, Y, Z) measured in cm
 
     const RATIO2CM = FACE_WIDTH_CM / faceWidth;
 
@@ -41,18 +47,18 @@ function faceCentroid2xyz(faceCentroid: Vector3, faceWidth: number) {
 
 
 function animate(faceCentroid: Vector3, faceWidth: number) {
-    // console.log( 'position ' + position);
 
-    controls.update();
+    const deltaTime = Math.min( 0.05, clock.getDelta() ) * 100; // / STEPS_PER_FRAME; - check
+
+    controls.update(deltaTime);
     const shift = faceCentroid2xyz(faceCentroid, faceWidth);
 
     camera.position.add(shift);
-    camera.lookAt(0, 0, 0);
+    // camera.lookAt(0, 0, 0);
 
     renderer.render( scene, camera );
 
     camera.position.sub(shift);
-
 }
 
 
