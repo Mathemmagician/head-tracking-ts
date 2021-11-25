@@ -1,5 +1,4 @@
 import './background.css'
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -15,6 +14,14 @@ const camera = new THREE.PerspectiveCamera( WEBCAM_FOV_Y, window.innerWidth / wi
 const renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#bg'),});
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
+
+window.addEventListener( 'resize', onWindowResize );
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
 
 camera.position.set(0, 50, 50);
 
