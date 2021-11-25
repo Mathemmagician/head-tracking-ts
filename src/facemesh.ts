@@ -4,7 +4,10 @@ import * as controls from '@mediapipe/control_utils';
 import * as drawingUtils from '@mediapipe/drawing_utils';
 import * as mpFaceMesh from '@mediapipe/face_mesh';
 import * as cameraUtils from '@mediapipe/camera_utils';
+import { Vector3 } from 'three';
 import { bgAnimate } from './background';
+import { MESH_ANNOTATIONS } from './mesh_annotations';
+
 
 const config = {
   locateFile: (file: any) => {
@@ -57,22 +60,26 @@ function onResults(results: mpFaceMesh.Results): void {
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
   canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
+  const rightEye = MESH_ANNOTATIONS['rightEyeUpper0'].concat( MESH_ANNOTATIONS['rightEyeLower0'] );
+  const leftEye = MESH_ANNOTATIONS['leftEyeUpper0'].concat( MESH_ANNOTATIONS['leftEyeLower0'] );
+
   if (results.multiFaceLandmarks.length > 0) {
-    let faceCentroid = [0,0,0];
 
     const landmarks = results.multiFaceLandmarks[0];
-    for (const landmark of landmarks) {
-      faceCentroid[0] += landmark.x;
-      faceCentroid[1] += landmark.y;
-      faceCentroid[2] += landmark.z;
-    }
-    for (let i=0; i<3; i++){
-      faceCentroid[i] /= landmarks.length;
-    }
 
     if (counter === 0) {
       console.log(mpFaceMesh.FACEMESH_FACE_OVAL);
     }
+    
+    drawingUtils.drawLandmarks(
+      canvasCtx, rightEye.map(i => landmarks[i]), 
+      {color: 'red', radius: 5,}
+    );
+
+    drawingUtils.drawLandmarks(
+      canvasCtx, leftEye.map(i => landmarks[i]), 
+      {color: 'green', radius: 5,}
+    );
 
     // drawingUtils.drawLandmarks(
     //   canvasCtx, landmarks.slice(125, 130+1), 
@@ -86,18 +93,18 @@ function onResults(results: mpFaceMesh.Results): void {
         canvasCtx, landmarks, mpFaceMesh.FACEMESH_TESSELATION,
         {color: '#C0C0C070', lineWidth: 1});
 
-    drawingUtils.drawConnectors(
-        canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYE,
-        {color: '#FF3030'});
-    drawingUtils.drawConnectors(
-        canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYEBROW,
-        {color: '#FF3030'});
-    drawingUtils.drawConnectors(
-        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYE,
-        {color: '#30FF30'});
-    drawingUtils.drawConnectors(
-        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYEBROW,
-        {color: '#30FF30'});
+    // drawingUtils.drawConnectors(
+    //     canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYE,
+    //     {color: '#FF3030'});
+    // drawingUtils.drawConnectors(
+    //     canvasCtx, landmarks, mpFaceMesh.FACEMESH_RIGHT_EYEBROW,
+    //     {color: '#FF3030'});
+    // drawingUtils.drawConnectors(
+    //     canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYE,
+    //     {color: '#30FF30'});
+    // drawingUtils.drawConnectors(
+    //     canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_EYEBROW,
+    //     {color: '#30FF30'});
     drawingUtils.drawConnectors(
         canvasCtx, landmarks, mpFaceMesh.FACEMESH_FACE_OVAL,
         {color: '#E0E0E0'});
@@ -112,9 +119,7 @@ function onResults(results: mpFaceMesh.Results): void {
           canvasCtx, landmarks, mpFaceMesh.FACEMESH_LEFT_IRIS,
           {color: '#30FF30'});
     }
-    // }
     // RA
-    // console.log(Math.round(faceCentroid[0] * 100)/100, Math.round(faceCentroid[1] * 100)/100);
 
     const leftTemple = landmarks[226];  // Adjust these
     const rightTemple = landmarks[446];
@@ -122,7 +127,13 @@ function onResults(results: mpFaceMesh.Results): void {
     const headPixelWidthY = Math.abs(leftTemple.y - rightTemple.y) * webcamePixelHeight;
     const headPixelWidth = Math.hypot(headPixelWidthX, headPixelWidthY);
 
-    bgAnimate(faceCentroid, headPixelWidth / webcamePixelWidth);
+    let eyeCenter = new Vector3(0,0,0);
+    for (const landmark of landmarks) {
+      eyeCenter.add(new Vector3(landmark.x, landmark.y, landmark.z));
+    }
+    eyeCenter.divideScalar(landmarks.length);
+
+    bgAnimate(eyeCenter, headPixelWidth / webcamePixelWidth);
   }
   canvasCtx.restore();
 }
@@ -131,13 +142,16 @@ const faceMesh = new mpFaceMesh.FaceMesh(config);
 faceMesh.setOptions(solutionOptions);
 faceMesh.onResults(onResults);
 
-const camera = new cameraUtils.Camera(videoElement, {
-  onFrame: async () => {
-    await faceMesh.send({ image: videoElement }).catch(e => alert(e));
-  },
-  width: webcamePixelWidth,
-  height: webcamePixelHeight
-});
+const camera = new cameraUtils.Camera(
+  videoElement, 
+  {
+    onFrame: async () => {
+      await faceMesh.send({ image: videoElement }).catch(e => alert(e));
+    },
+    width: webcamePixelWidth,
+    height: webcamePixelHeight
+  }
+);
 camera.start();
 
 // Present a control panel through which the user can manipulate the solution

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { scene } from './scene';
+import { Vector3 } from 'three';
 
 const WEBCAM_FOV_Y = 54; // https://developer.apple.com/documentation/modelio/mdlcamera/1391726-fieldofview
 const WEBCAM_FOV_X = 75; // maybe?
@@ -26,20 +27,20 @@ function onWindowResize() {
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-function faceCentroid2xyz(faceCentroid: Array<number>, faceWidth: number) {
+function faceCentroid2xyz(faceCentroid: Vector3, faceWidth: number) {
     // This function converts faceCentroid (x, y, z) with coordinates ranging
     // from about 0 to 1 to (X, Y, Z) measured in cm
 
     const RATIO2CM = FACE_WIDTH_CM / faceWidth;
 
     const Z = RATIO2CM / 2 / Math.tan(WEBCAM_FOV_Y / 2 * DEG2RAD);
-    const X = (faceCentroid[0] - 0.5) * 100;
-    const Y = -(faceCentroid[1] - 0.5) * 100;
+    const X = (faceCentroid.x - 0.5) * 100;
+    const Y = -(faceCentroid.y - 0.5) * 100;
     return new THREE.Vector3(X, Y, Z);
 }
 
 
-function animate(faceCentroid: Array<number>, faceWidth: number) {
+function animate(faceCentroid: Vector3, faceWidth: number) {
     // console.log( 'position ' + position);
 
     controls.update();
