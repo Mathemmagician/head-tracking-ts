@@ -52,13 +52,24 @@ function animate(faceCentroid: Vector3, faceWidth: number) {
 
     controls.update(deltaTime);
     const shift = faceCentroid2xyz(faceCentroid, faceWidth);
+    // const final = camera.localToWorld(shift);
+    // const final = camera.worldToLocal(new THREE.Vector3(0, 0, 0));
+    camera.translateX( shift.x );
+    camera.translateY( shift.y );
+    camera.translateZ( shift.z );
 
-    camera.position.add(shift);
+    // camera.position.add(shift);
     // camera.lookAt(0, 0, 0);
+    // camera.position.set(final.x, final.y, final.z);
 
     renderer.render( scene, camera );
 
-    camera.position.sub(shift);
+    // camera.position.sub(shift);
+    camera.translateX( (-shift.x) );
+    camera.translateY( (-shift.y) );
+    camera.translateZ( (-shift.z) );
+
+    // console.log(camera.matrixWorld.elements);
 }
 
 
