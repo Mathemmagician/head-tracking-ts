@@ -116,8 +116,6 @@ function onResults(results: mpFaceMesh.Results): void {
     // RA
     // console.log(Math.round(faceCentroid[0] * 100)/100, Math.round(faceCentroid[1] * 100)/100);
 
-    // const faceWidth = Math.hypot()
-
     const leftTemple = landmarks[226];  // Adjust these
     const rightTemple = landmarks[446];
     const headPixelWidthX = Math.abs(leftTemple.x - rightTemple.x) * webcamePixelWidth;
