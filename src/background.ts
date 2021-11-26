@@ -2,7 +2,6 @@
 // https://github.com/mrdoob/three.js/blob/master/examples/games_fps.html
 import './background.css'
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
 
 import { scene } from './scene';
@@ -23,6 +22,7 @@ camera.position.set(0, 50, 50);
 
 // const controls = new OrbitControls( camera, renderer.domElement );
 const controls = new FlyControls( camera, renderer.domElement );
+controls.dragToLook = true;
 
 
 window.addEventListener( 'resize', onWindowResize );
