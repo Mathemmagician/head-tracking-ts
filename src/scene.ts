@@ -25,10 +25,10 @@ scene.add(torus);
 /*
 const rectLightHelper = new THREE.RectAreaLightHelper( rectLight );
 rectLight.add( rectLightHelper );
-
-const light = new THREE.AmbientLight( 0xffffff); // soft white light
-scene.add( light );
 */
+const light = new THREE.AmbientLight( 0xffffff, 0.5); // soft white light
+scene.add( light );
+
 const pointLight = new THREE.PointLight( 0xe0e0e0 );
 pointLight.position.set(0, 10, 40);
 scene.add(pointLight);
@@ -84,4 +84,4 @@ loader.load( 'assets/collision-world.glb', ( gltf ) => {
 
 
 
-export { scene };
+export { scene, light };

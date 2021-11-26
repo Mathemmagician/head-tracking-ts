@@ -7,7 +7,7 @@ import * as cameraUtils from '@mediapipe/camera_utils';
 import { Vector3 } from 'three';
 import { bgAnimate } from './background';
 import { MESH_ANNOTATIONS } from './mesh_annotations';
-
+import { light } from './scene';
 
 const config = {
   locateFile: (file: any) => {
@@ -33,7 +33,9 @@ const solutionOptions = {
   maxNumFaces: 1,
   refineLandmarks: false,
   minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
+  minTrackingConfidence: 0.5,
+  intensity: 1,
+  color: 0xffffff
 };
 
 // We'll add this to our control panel later, but we'll save it here so we can
@@ -70,19 +72,19 @@ function onResults(results: mpFaceMesh.Results): void {
     if (counter === 0) {
       console.log(mpFaceMesh.FACEMESH_FACE_OVAL);
     }
-    
+
     drawingUtils.drawLandmarks(
-      canvasCtx, rightEye.map(i => landmarks[i]), 
+      canvasCtx, rightEye.map(i => landmarks[i]),
       {color: 'red', radius: 5,}
     );
 
     drawingUtils.drawLandmarks(
-      canvasCtx, leftEye.map(i => landmarks[i]), 
+      canvasCtx, leftEye.map(i => landmarks[i]),
       {color: 'green', radius: 5,}
     );
 
     // drawingUtils.drawLandmarks(
-    //   canvasCtx, landmarks.slice(125, 130+1), 
+    //   canvasCtx, landmarks.slice(125, 130+1),
     //   {color: 'red', radius: 5,});
     counter += 0.1;
     // console.log('counter + ' + counter);
@@ -109,7 +111,7 @@ function onResults(results: mpFaceMesh.Results): void {
         canvasCtx, landmarks, mpFaceMesh.FACEMESH_FACE_OVAL,
         {color: '#E0E0E0'});
     drawingUtils.drawConnectors(
-        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LIPS, 
+        canvasCtx, landmarks, mpFaceMesh.FACEMESH_LIPS,
         {color: '#E0E0E0'});
     if (solutionOptions.refineLandmarks) {
       drawingUtils.drawConnectors(
@@ -143,7 +145,7 @@ faceMesh.setOptions(solutionOptions);
 faceMesh.onResults(onResults);
 
 const camera = new cameraUtils.Camera(
-  videoElement, 
+  videoElement,
   {
     onFrame: async () => {
       await faceMesh.send({ image: videoElement }).catch(e => alert(e));
@@ -200,9 +202,23 @@ new controls
         range: [0, 1],
         step: 0.01
       }),
+      new controls.Slider({
+        title: 'light intensity',
+        field: 'intensity',
+        range: [-1, 6],
+        step: 0.01
+      }),
+      new controls.Slider({
+        title: 'light color',
+        field: 'color',
+        range: [0, 0xffffff],
+        step: 1
+      }),
     ])
     .on(x => {
       const options = x as mpFaceMesh.Options;
       videoElement.classList.toggle('selfie', options.selfieMode);
       faceMesh.setOptions(options);
+      light.intensity = options.intensity;
+      light.color.setHex(options.color);
     });
