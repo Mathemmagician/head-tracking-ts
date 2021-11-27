@@ -39,7 +39,7 @@ const lightHelper = new THREE.PointLightHelper(pointLight);
 scene.add(lightHelper);
 */
 
-// loader.load( "assets/scene.gltf", function ( gltf ){
+// loader.load( "src/assets/scene.gltf", function ( gltf ){
 //   let sc = gltf.scene;
 //   sc.scale.set(10, 10, 10);
 //   scene.add(sc);
@@ -53,7 +53,7 @@ scene.add(lightHelper);
 
 
 // scene from https://github.com/mrdoob/three.js/blob/master/examples/games_fps.html
-loader.load( 'assets/collision-world.glb', ( gltf ) => {
+loader.load( 'src/assets/collision-world.glb', ( gltf ) => {
     let sc = gltf.scene;
     sc.scale.set(10, 10, 10);
     scene.add( sc );
