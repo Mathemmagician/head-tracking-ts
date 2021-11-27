@@ -45,29 +45,72 @@ function faceCentroid2xyz(faceCentroid: Vector3, faceWidth: number) {
     return new THREE.Vector3(X, Y, Z);
 }
 
+//didn't really work, has a problem where going from 100 -> 110 may be much different than 0.1 -> 0.11
+//each dimension probably needs to be transformed to their equivelant [0,1] representation for to work.
+function isSteady(prior: Vector3, current: Vector3, sensitivity: double){
+  function isDimSteady(u: double, v: double){
+    if (Math.abs(u) < 0.5){
+      u += Math.sign(u);
+      v += Math.sign(u);
+    }
+    return (Math.abs(u - v) / u) < sensitivity;
+  }
+  return !isDimSteady(prior.x,current.x) || !isDimSteady(prior.y,current.y) || !isDimSteady(prior.z,current.z);
+}
+
+const coords = [];
+const smoothingConstant = 10;
+for(let i=0;i<smoothingConstant;i++){
+  coords.push(new THREE.Vector3(0, 0, 0));
+}
+
+const coord = new THREE.Vector3(0,0,0);
+const priorCameraCoordinate = new THREE.Vector3(0, 0, 0);
+let ind = 0;
 
 function animate(faceCentroid: Vector3, faceWidth: number) {
 
     const deltaTime = Math.min( 0.05, clock.getDelta() ) * 100; // / STEPS_PER_FRAME; - check
-
     controls.update(deltaTime);
     const shift = faceCentroid2xyz(faceCentroid, faceWidth);
+
     // const final = camera.localToWorld(shift);
     // const final = camera.worldToLocal(new THREE.Vector3(0, 0, 0));
-    camera.translateX( shift.x );
-    camera.translateY( shift.y );
-    camera.translateZ( shift.z );
+
+    /*console.log("x",priorCameraCoordinate.x,shift.x);
+    console.log("y",priorCameraCoordinate.y,shift.y);
+    console.log("z",priorCameraCoordinate.z,shift.z);*/
+
+    //let sufficentChange = isSteady(coord,shift,0.01)
+    coords[ind].x = shift.x;
+    coords[ind].y = shift.y;
+    coords[ind].z = shift.z;
+
+    ind += 1;
+    ind %= smoothingConstant;
+
+    coord.x = 0; coord.y = 0; coord.z = 0;
+
+    for(let i=0;i<smoothingConstant;i++){
+      coord.addVectors(coord,coords[i]);
+    }
+    coord.multiplyScalar(1/smoothingConstant);
+
+    camera.translateX(coord.x);
+    camera.translateY(coord.y);
+    camera.translateZ(coord.z);
 
     // camera.position.add(shift);
     // camera.lookAt(0, 0, 0);
     // camera.position.set(final.x, final.y, final.z);
 
+    //console.log(shift.x, camera.position.x);
     renderer.render( scene, camera );
 
     // camera.position.sub(shift);
-    camera.translateX( (-shift.x) );
-    camera.translateY( (-shift.y) );
-    camera.translateZ( (-shift.z) );
+    camera.translateX( (-coord.x) );
+    camera.translateY( (-coord.y) );
+    camera.translateZ( (-coord.z) );
 
     // console.log(camera.matrixWorld.elements);
 }
