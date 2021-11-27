@@ -140,9 +140,16 @@ function onResults(results: mpFaceMesh.Results): void {
   canvasCtx.restore();
 }
 
+console.log(typeof(mpFaceMesh));
+console.log(mpFaceMesh);
+
 const faceMesh = new mpFaceMesh.FaceMesh(config);
 faceMesh.setOptions(solutionOptions);
 faceMesh.onResults(onResults);
+
+console.log('here');
+console.log(typeof(faceMesh));
+console.log(faceMesh);
 
 const camera = new cameraUtils.Camera(
   videoElement,

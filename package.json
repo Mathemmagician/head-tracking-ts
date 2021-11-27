@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build-gh": "tsc && vite build --base=/head-tracking-ts/",
+    "build": "tsc && vite build --minify=false",
+    "build-gh": "tsc && vite build --base=/head-tracking-ts/ --minify=false",
     "serve": "vite preview"
   },
   "devDependencies": {
