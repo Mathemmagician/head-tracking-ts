@@ -53,33 +53,33 @@ scene.add(lightHelper);
 
 
 // scene from https://github.com/mrdoob/three.js/blob/master/examples/games_fps.html
-loader.load( 'src/assets/collision-world.glb', ( gltf ) => {
-    let sc = gltf.scene;
-    sc.scale.set(10, 10, 10);
-    scene.add( sc );
+// loader.load( 'src/assets/collision-world.glb', ( gltf ) => {
+//     let sc = gltf.scene;
+//     sc.scale.set(10, 10, 10);
+//     scene.add( sc );
 
-    // worldOctree.fromGraphNode( gltf.scene );
+//     // worldOctree.fromGraphNode( gltf.scene );
 
-    // gltf.scene.traverse( child => {
+//     // gltf.scene.traverse( child => {
 
-    //     if ( child.isMesh ) {
+//     //     if ( child.isMesh ) {
 
-    //         child.castShadow = true;
-    //         child.receiveShadow = true;
+//     //         child.castShadow = true;
+//     //         child.receiveShadow = true;
 
-    //         if ( child.material.map ) {
+//     //         if ( child.material.map ) {
 
-    //             child.material.map.anisotropy = 8;
+//     //             child.material.map.anisotropy = 8;
 
-    //         }
+//     //         }
 
-    //     }
+//     //     }
 
-    // } );
+//     // } );
 
-    // animate();
+//     // animate();
 
-} );
+// } );
 
 
 
