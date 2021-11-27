@@ -7,7 +7,7 @@ import * as cameraUtils from '@mediapipe/camera_utils';
 import { Vector3 } from 'three';
 import { bgAnimate } from './background';
 import { MESH_ANNOTATIONS } from './mesh_annotations';
-import { light } from './scene';
+// import { light } from './scene';
 
 const config = {
   locateFile: (file: any) => {
@@ -219,6 +219,6 @@ new controls
       const options = x as mpFaceMesh.Options;
       videoElement.classList.toggle('selfie', options.selfieMode);
       faceMesh.setOptions(options);
-      light.intensity = options.intensity;
-      light.color.setHex(options.color);
+      // light.intensity = options.intensity;
+      // light.color.setHex(options.color);
     });

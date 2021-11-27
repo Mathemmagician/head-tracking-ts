@@ -8,14 +8,14 @@ import { scene } from './scene';
 import { Vector3 } from 'three';
 
 const WEBCAM_FOV_Y = 54; // https://developer.apple.com/documentation/modelio/mdlcamera/1391726-fieldofview
-const WEBCAM_FOV_X = 75; // maybe?
+// const WEBCAM_FOV_X = 75; // maybe?
 const DEG2RAD = Math.PI / 180;
 const FACE_WIDTH_CM = 15;  // double check
 
 const clock = new THREE.Clock();
 
 const camera = new THREE.PerspectiveCamera( WEBCAM_FOV_Y, window.innerWidth / window.innerHeight, 0.1, 1000 );
-const renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#bg'),});
+const renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#bg') as HTMLCanvasElement});
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 camera.position.set(0, 50, 50);
