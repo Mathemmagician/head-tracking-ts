@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "/head-tracking-ts/",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",

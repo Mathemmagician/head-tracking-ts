@@ -40,7 +40,7 @@ const solutionOptions = {
 
 // We'll add this to our control panel later, but we'll save it here so we can
 // call tick() each time the graph runs.
-const fpsControl = new controls.FPS();
+// const fpsControl = new controls.FPS();
 
 // Optimization: Turn off animated spinner after its hiding animation is done.
 const spinner = document.querySelector('.loading')! as HTMLDivElement;
@@ -55,7 +55,7 @@ function onResults(results: mpFaceMesh.Results): void {
   document.body.classList.add('loaded');
 
   // Update the frame rate.
-  fpsControl.tick();
+  // fpsControl.tick();
 
   // Draw the overlays.
   canvasCtx.save();
@@ -162,7 +162,7 @@ new controls
     .ControlPanel(controlsElement, solutionOptions)
     .add([
       new controls.StaticText({title: 'MediaPipe Face Mesh'}),
-      fpsControl,
+      // fpsControl,
       new controls.Toggle({title: 'Selfie Mode', field: 'selfieMode'}),
       /*new controls.SourcePicker({
         onFrame:
