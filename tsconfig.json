@@ -9,7 +9,7 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noEmit": true,
+    "noEmit": false,
     "noUnusedLocals": false,  // changed
     "noUnusedParameters": false,  // changed
     "noImplicitReturns": true

@@ -1,14 +1,15 @@
 const path = require('path');
 
 module.exports = {
-  entry: './index.html',
+  entry: './src/facemesh.ts',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] }
     ],
   },
   resolve: {
