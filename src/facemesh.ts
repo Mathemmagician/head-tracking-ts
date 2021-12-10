@@ -11,7 +11,8 @@ import { MESH_ANNOTATIONS } from './mesh_annotations';
 
 const config = {
   locateFile: (file: any) => {
-    return `node_modules/@mediapipe/face_mesh/${file}`;
+    // return `node_modules/@mediapipe/face_mesh/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
   }
 };
 
