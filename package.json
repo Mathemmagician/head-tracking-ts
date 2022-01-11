@@ -13,10 +13,10 @@
     "vite": "^2.6.4"
   },
   "dependencies": {
-    "@mediapipe/camera_utils": "^0.3.1632432234",
-    "@mediapipe/control_utils": "^0.6.1629159505",
-    "@mediapipe/drawing_utils": "^0.3.1620248257",
-    "@mediapipe/face_mesh": "^0.4.1633559619",
+    "@mediapipe/camera_utils": "https://github.com/donut-goes-up-and-down/camera_utils.git",
+    "@mediapipe/control_utils": "https://github.com/donut-goes-up-and-down/control_utils.git",
+    "@mediapipe/drawing_utils": "https://github.com/donut-goes-up-and-down/drawing_utils.git",
+    "@mediapipe/face_mesh": "https://github.com/donut-goes-up-and-down/face_mesh.git",
     "device-detector-js": "^3.0.0",
     "three": "^0.134.0"
   }
